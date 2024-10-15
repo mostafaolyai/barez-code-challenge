@@ -3,14 +3,19 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../../apis/user/user.service';
 
 class JwtMiddleware {
-  constructor( private jwtService: JwtService, private userService: UserService) {}
+  constructor(
+    private jwtService: JwtService,
+    private userService: UserService,
+  ) {}
 
   async run(req: any, res: any, next: () => void) {
     const authHeader = req?.headers?.authorization;
 
     const token = authHeader?.split(' ')[1];
-   if(token){
-      const payload = this.jwtService.verify(token, { secret: process.env.JWT_SECRET });
+    if (token) {
+      const payload = this.jwtService.verify(token, {
+        secret: process.env.JWT_SECRET,
+      });
 
       const user = await this.userService.findById(payload.sub);
 
@@ -19,13 +24,16 @@ class JwtMiddleware {
       }
 
       req.user = user; // Attach user to request
-    } 
-      next();
+    }
+    next();
   }
 }
 
-export function getJwtMiddleware(jwtService: JwtService, userService: UserService){
-const e = new JwtMiddleware(jwtService, userService)
+export function getJwtMiddleware(
+  jwtService: JwtService,
+  userService: UserService,
+) {
+  const e = new JwtMiddleware(jwtService, userService);
 
-return e.run.bind(e)
+  return e.run.bind(e);
 }

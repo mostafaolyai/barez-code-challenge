@@ -22,11 +22,11 @@ import { RolesGuard } from './auth/guards/roles.gurad';
     UserModule,
     AuthModule,
   ],
-  providers:[
+  providers: [
     {
       provide: APP_GUARD,
-      useClass:RolesGuard
-  }
-  ]
+      useClass: RolesGuard,
+    },
+  ],
 })
 export class AppModule {}

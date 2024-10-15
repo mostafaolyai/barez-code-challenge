@@ -13,7 +13,7 @@ export class AuthService {
 
   async validateUser(username: string, pass: string): Promise<any> {
     const user = await this.userService.findByUsername(username);
-    if (user && await bcrypt.compare(pass, user.password)) {
+    if (user && (await bcrypt.compare(pass, user.password))) {
       const { password, ...result } = user;
       return result;
     }
@@ -21,13 +21,15 @@ export class AuthService {
   }
 
   async login(login: LoginDto) {
-    const user = await this.validateUser(login.username, login.password)
+    const user = await this.validateUser(login.username, login.password);
 
-    if(!user) throw new NotFoundException("user not found")
-      
+    if (!user) throw new NotFoundException('user not found');
+
     const payload = { username: login.username, sub: user.id };
     return {
-      access_token: this.jwtService.sign(payload, {secret: process.env.JWT_SECRET}),
+      access_token: this.jwtService.sign(payload, {
+        secret: process.env.JWT_SECRET,
+      }),
     };
   }
 }
